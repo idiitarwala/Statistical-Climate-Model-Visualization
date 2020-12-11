@@ -1,20 +1,7 @@
 from typing import List
 import matplotlib.pyplot as plt
 from filter import filtered_data, Dataset
-
-
-def get_x_values(dataset: Dataset) -> List[str]:
-    """Given a Dataset
-    return an array of its x-values
-    """
-    return [point[0] for point in dataset.data]
-
-
-def get_y_values(dataset: Dataset) -> List[float]:
-    """Given a Dataset
-    return an array of its y-values
-    """
-    return [point[1] for point in dataset.data]
+from regressions import sort_x_values, sort_y_values
 
 
 def calculate_simple_moving_average(period: int, values: List[float]) -> List[float]:
