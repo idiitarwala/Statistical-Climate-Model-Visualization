@@ -4,6 +4,125 @@ import matplotlib.pyplot as plt
 from filter import filtered_data, Dataset
 
 
+def plot_data_linear_regression(dataset: Dataset) -> Any:
+    """This function takes in a dataset and the corresponding a and b values calculated in
+    linear_regression to graph a scatter plot and its corresponding linear regression
+    with the equation y = a + bx
+
+    This function returns the figure with the graphed scatter plot and its corresponding
+    linear regression
+    """
+    x_value = sort_x_values(dataset)
+    y_value = sort_y_values(dataset)
+    # calculates the a and b value for the corresponding dataset
+    formatted_points = format_data_points(x_value, y_value)
+    a_and_b = linear_regression(formatted_points)
+
+    a = a_and_b[0]
+    b = a_and_b[1]
+
+    figure = plt.figure()  # creates a new figure
+    # plots a scatter plot with the given x and y values
+    plt.scatter(x_value, y_value, label='points', color='k', s=10)
+    plt.xlabel('Year')
+    plt.title('Climate Data with a Linear Regression')
+    plt.ylabel('Temperature (°C)')
+    # Now we want to overlay the regression function on the scatter plot
+    start_year = x_value[0]
+    end_year = x_value[-1]
+    # calculates the x and y values of the regression
+    x_regression_values = [year for year in range(start_year, end_year + 1)]
+    y_regression_values = [a + (b * x) for x in range(start_year, end_year + 1)]
+    # plots the x and y values of the regression over the current scatter plot
+    plt.plot(x_regression_values, y_regression_values)
+
+    plt.show()
+
+    return figure
+
+
+def plot_data_exponential_regression(dataset: Dataset) -> Any:
+    """This function takes in a dataset and the corresponding a and r values calculated in
+    exponential_regression to graph a scatter plot and its corresponding exponential regression
+     with the equation y = a * (r) ** x
+
+    This function returns the figure with the graphed scatter plot and its corresponding
+    exponential regression
+    """
+    x_value = sort_x_values(dataset)
+    y_value = sort_y_values(dataset)
+    # calculates the a and r value for the corresponding dataset
+    formatted_points = format_data_points(x_value, y_value)
+    a_and_r = exponential_regression(formatted_points)
+
+    a = a_and_r[0]
+    r = a_and_r[1]
+
+    figure = plt.figure()  # creates a new figure
+    # plots a scatter plot with the given x and y values
+    plt.scatter(x_value, y_value, label='points', color='k', s=10)
+    plt.xlabel('Year')
+    plt.title('Climate Data with an Exponential Regression')
+    plt.ylabel('Temperature (°C)')
+    # Now we want to overlay the regression function on the scatter plot
+    start_year = x_value[0]
+    end_year = x_value[-1]
+    # plots the x and y values of the regression over the current scatter plot
+    x_regression_values = [year for year in range(start_year, end_year + 1)]
+    y_regression_values = [a * (r ** x) for x in range(start_year, end_year + 1)]
+    # plots the x and y values of the regression over the current scatter plot
+    plt.plot(x_regression_values, y_regression_values)
+
+    plt.show()
+
+    return figure
+
+
+def predict_linear(dataset: Dataset, year: int) -> float:
+    """This function determines the temperature at any given year based on the linear regression
+    of the given dataset.
+
+    This function returns a float representing the temperature at the given year
+
+    Preconditions:
+        - year >= sort_x_values(dataset)[0]
+        - year <= 2200
+    """
+    x_values = sort_x_values(dataset)
+    y_values = sort_y_values(dataset)
+
+    formatted_points = format_data_points(x_values, y_values)
+    a_and_b = linear_regression(formatted_points)
+    a = a_and_b[0]
+    b = a_and_b[1]
+
+    return a + (b * year)
+
+
+def predict_exponential(dataset: Dataset, year: int) -> float:
+    """This function determines the temperature at any given year based on the
+     exponential regression of the given dataset.
+
+     This function returns a float representing the temperature at the given year
+
+     Preconditions:
+         - year >= sort_x_values(dataset)[0]
+         - year <= 2200
+     """
+    x_values = sort_x_values(dataset)
+    y_values = sort_y_values(dataset)
+
+    formatted_points = format_data_points(x_values, y_values)
+    a_and_b = exponential_regression(formatted_points)
+    a = a_and_b[0]
+    r = a_and_b[1]
+
+    return a * r ** year
+
+
+###############################################################################
+# Helper Functions
+###############################################################################
 def sort_x_values(dataset: Dataset) -> List[int]:
     """The x values of the the plot correspond to the year of a given temperature value.
 
@@ -125,68 +244,6 @@ def exponential_regression(points: List[Tuple[int, float]]) -> tuple:
     r = 10 ** temp_regression_values[1]
 
     return a, r
-
-
-def plot_data_linear_regression(dataset: Dataset, a: float, b: float) -> Any:
-    """This function takes in a dataset and the corresponding a and b values calculated in
-    linear_regression to graph a scatter plot and its corresponding linear regression
-    with the equation y = a + bx
-
-    This function returns the figure with the graphed scatter plot and its corresponding
-    linear regression
-    """
-    x_value = sort_x_values(dataset)
-    y_value = sort_y_values(dataset)
-
-    figure = plt.figure()  # creates a new figure
-    # plots a scatter plot with the given x and y values
-    plt.scatter(x_value, y_value, label='points', color='k', s=10)
-    plt.xlabel('Year')
-    plt.title('Climate Data with Linear Regression')
-    plt.ylabel('Temperature (°C)')
-    # Now we want to overlay the regression function on the scatter plot
-    start_year = x_value[0]
-    end_year = x_value[-1]
-    # calculates the x and y values of the regression
-    x_regression_values = [year for year in range(start_year, end_year + 1)]
-    y_regression_values = [a + (b * x) for x in range(start_year, end_year + 1)]
-    # plots the x and y values of the regression over the current scatter plot
-    plt.plot(x_regression_values, y_regression_values)
-
-    plt.show()
-
-    return figure
-
-
-def plot_data_exponential_regression(dataset: Dataset, a: float, r: float) -> Any:
-    """This function takes in a dataset and the corresponding a and r values calculated in
-    exponential_regression to graph a scatter plot and its corresponding exponential regression
-     with the equation y = a * (r) ** x
-
-    This function returns the figure with the graphed scatter plot and its corresponding
-    exponential regression
-    """
-    x_value = sort_x_values(dataset)
-    y_value = sort_y_values(dataset)
-
-    figure = plt.figure()  # creates a new figure
-    # plots a scatter plot with the given x and y values
-    plt.scatter(x_value, y_value, label='points', color='k', s=10)
-    plt.xlabel('Year')
-    plt.title('Climate Data with Linear Regression')
-    plt.ylabel('Temperature (°C)')
-    # Now we want to overlay the regression function on the scatter plot
-    start_year = x_value[0]
-    end_year = x_value[-1]
-    # plots the x and y values of the regression over the current scatter plot
-    x_regression_values = [year for year in range(start_year, end_year + 1)]
-    y_regression_values = [a * (r ** x) for x in range(start_year, end_year + 1)]
-    # plots the x and y values of the regression over the current scatter plot
-    plt.plot(x_regression_values, y_regression_values)
-
-    plt.show()
-
-    return figure
 
 
 if __name__ == '__main__':
