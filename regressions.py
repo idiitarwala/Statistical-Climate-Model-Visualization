@@ -89,6 +89,31 @@ def plot_data_exponential_regression(dataset: Dataset) -> plt.Figure:
     return figure
 
 
+def plot_polynomial_regression(dataset: Dataset) -> Any:
+    x_value = sort_x_values(dataset)
+    y_value = sort_y_values(dataset)
+
+    figure = plt.figure()
+
+    regression = np.poly1d(np.polyfit(x_value, y_value, 10))
+
+    start_year = x_value[0]
+    end_year = x_value[-1]
+
+    data_domain = np.linspace(start_year, end_year, 100)
+
+    plt.scatter(x_value, y_value, label='points', color='k', s=10)
+    plt.xlabel('Year')
+    plt.title('Climate Data with an Polynomial Regression')
+    plt.ylabel('Temperature (°C)')
+
+    plt.plot(data_domain, regression(data_domain))
+
+    plt.show()
+
+    return figure
+
+
 def predict_linear(dataset: Dataset, year: int) -> float:
     """This function determines the temperature at any given year based on the linear regression
     of the given dataset.
