@@ -40,23 +40,29 @@ def execute() -> None:
     # Quantitative Findings
     output.add_annotation('<h2>', 'Quantitative Findings')
 
-    types = ['Linear', 'Exponential']
+    types = ['Linear', 'Exponential', 'Polynomial']
     graphs = [output.get_data()['hottest'], output.get_data()['median'], output.get_data()['coldest']]
     titles = ['hottest', 'median', 'coldest']
     for t in types:
         for i in range(0, len(graphs)):
             head, tail = regressions_error.get_head_tail(graphs[i])
 
+            figure = None
+            error = None
+            prediction = None
+
             if t == 'Linear':
                 figure = regressions.plot_data_linear_regression(graphs[i])
                 prediction = regressions.predict_linear(graphs[i], 2100)
                 error = regressions_error.linear_regression_error(head, tail)
-            else:
+            elif t == 'Exponential':
                 figure = regressions.plot_data_exponential_regression(
                     graphs[i])
                 prediction = regressions.predict_exponential(graphs[i], 2100)
                 error = regressions_error.exponential_regression_error(
                     head, tail)
+            elif t == 'Polynomial':
+                figure = regressions.plot_polynomial_regression(graphs[i])
 
             output.add_annotation(
                 '<h3>', t + ' regression performed on ' + titles[i] + ' month.')
@@ -65,14 +71,15 @@ def execute() -> None:
 
             output.add_figure(figure)
 
-            output.add_annotation('<h4>', 'Error and Predictions')
-            output.add_annotation('<p>', 'Using the first half of our ' + MONTHS[graphs[i].month]
-                                  + ' data, we can predict the second half with an average percentage error of '
-                                  + str(round(error, 2)) + '%.')
+            if t in ('Linear', 'Exponential'):
+                output.add_annotation('<h4>', 'Error and Predictions')
+                output.add_annotation('<p>', 'Using the first half of our ' + MONTHS[graphs[i].month]
+                                      + ' data, we can predict the second half with an average percentage error of '
+                                      + str(round(error, 2)) + '%.')
 
-            output.add_annotation('<p>', 'The regression predicts the average ' + MONTHS[graphs[i].month]
-                                  + ' temperature to be '
-                                  + str(round(prediction, 2)) + ' °C in the year 2100.')
+                output.add_annotation('<p>', 'The regression predicts the average ' + MONTHS[graphs[i].month]
+                                      + ' temperature to be '
+                                      + str(round(prediction, 2)) + ' °C in the year 2100.')
 
     # Qualitative Findings
     output.add_annotation('<h2>', 'Qualitative Findings')

@@ -6,6 +6,7 @@ By Idris Tarwala and Freeman Cheng.
 from typing import List, Tuple
 from math import log10, isclose
 import matplotlib.pyplot as plt
+import numpy as np
 from filter import filtered_data, Dataset
 from constants import MONTHS
 
@@ -89,7 +90,9 @@ def plot_data_exponential_regression(dataset: Dataset) -> plt.Figure:
     return figure
 
 
-def plot_polynomial_regression(dataset: Dataset) -> Any:
+def plot_polynomial_regression(dataset: Dataset) -> plt.Figure:
+    """Given a dataset
+    return a figure with its polynomial regression."""
     x_value = sort_x_values(dataset)
     y_value = sort_y_values(dataset)
 
@@ -102,15 +105,15 @@ def plot_polynomial_regression(dataset: Dataset) -> Any:
 
     data_domain = np.linspace(start_year, end_year, 100)
 
-    plt.scatter(x_value, y_value, label='points', color='k', s=10)
+    plt.scatter(x_value, y_value, label=MONTHS[dataset.month] + ' Temperature Data', color='k', s=10)
     plt.xlabel('Year')
     plt.title('Climate Data with an Polynomial Regression')
     plt.ylabel('Temperature (°C)')
 
-    plt.plot(data_domain, regression(data_domain))
+    plt.plot(data_domain, regression(data_domain), label='Polynomial Regression.')
 
-    plt.show()
-
+    plt.legend(loc='upper left')
+    # plt.show()
     return figure
 
 
@@ -305,6 +308,7 @@ if __name__ == '__main__':
     #         'filter',
     #         'constants',
     #         'matplotlib.pyplot',
+    #         'numpy',
     #         'python_ta.contracts'
     #     ],  # the names (strs) of imported modules
     #     'allowed-io': [
