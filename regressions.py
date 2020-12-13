@@ -1,10 +1,18 @@
-from typing import List, Tuple, Any
-from math import log10
+"""This module computes the linear, exponential, and polynomial regressions of the climate data.
+Specific details can be found in the final report.
+
+By Idris Tarwala and Freeman Cheng.
+"""
+from typing import List, Tuple
+from math import log10, isclose
 import matplotlib.pyplot as plt
 from filter import filtered_data, Dataset
+from constants import MONTHS
+
+plt.ioff()
 
 
-def plot_data_linear_regression(dataset: Dataset) -> Any:
+def plot_data_linear_regression(dataset: Dataset) -> plt.Figure:
     """This function takes in a dataset and the corresponding a and b values calculated in
     linear_regression to graph a scatter plot and its corresponding linear regression
     with the equation y = a + bx
@@ -23,7 +31,7 @@ def plot_data_linear_regression(dataset: Dataset) -> Any:
 
     figure = plt.figure()  # creates a new figure
     # plots a scatter plot with the given x and y values
-    plt.scatter(x_value, y_value, label='points', color='k', s=10)
+    plt.scatter(x_value, y_value, label=MONTHS[dataset.month] + ' Temperature Data', color='k', s=10)
     plt.xlabel('Year')
     plt.title('Climate Data with a Linear Regression')
     plt.ylabel('Temperature (°C)')
@@ -31,17 +39,18 @@ def plot_data_linear_regression(dataset: Dataset) -> Any:
     start_year = x_value[0]
     end_year = x_value[-1]
     # calculates the x and y values of the regression
-    x_regression_values = [year for year in range(start_year, end_year + 1)]
+    x_regression_values = list(range(start_year, end_year + 1))
     y_regression_values = [a + (b * x) for x in range(start_year, end_year + 1)]
     # plots the x and y values of the regression over the current scatter plot
-    plt.plot(x_regression_values, y_regression_values)
+    plt.plot(x_regression_values, y_regression_values,
+             label='Linear Regression: y=' + str(round(a, 2)) + '+' + str(round(b, 2)) + 'x')
 
-    plt.show()
-
+    plt.legend(loc='upper left')
+    # plt.show()
     return figure
 
 
-def plot_data_exponential_regression(dataset: Dataset) -> Any:
+def plot_data_exponential_regression(dataset: Dataset) -> plt.Figure:
     """This function takes in a dataset and the corresponding a and r values calculated in
     exponential_regression to graph a scatter plot and its corresponding exponential regression
      with the equation y = a * (r) ** x
@@ -57,10 +66,11 @@ def plot_data_exponential_regression(dataset: Dataset) -> Any:
 
     a = a_and_r[0]
     r = a_and_r[1]
+    c = a_and_r[2]
 
     figure = plt.figure()  # creates a new figure
     # plots a scatter plot with the given x and y values
-    plt.scatter(x_value, y_value, label='points', color='k', s=10)
+    plt.scatter(x_value, y_value, label=MONTHS[dataset.month] + ' Temperature Data', color='k', s=10)
     plt.xlabel('Year')
     plt.title('Climate Data with an Exponential Regression')
     plt.ylabel('Temperature (°C)')
@@ -68,13 +78,14 @@ def plot_data_exponential_regression(dataset: Dataset) -> Any:
     start_year = x_value[0]
     end_year = x_value[-1]
     # plots the x and y values of the regression over the current scatter plot
-    x_regression_values = [year for year in range(start_year, end_year + 1)]
-    y_regression_values = [a * (r ** x) for x in range(start_year, end_year + 1)]
+    x_regression_values = list(range(start_year, end_year + 1))
+    y_regression_values = [a * (r ** x) + c for x in range(start_year, end_year + 1)]
     # plots the x and y values of the regression over the current scatter plot
-    plt.plot(x_regression_values, y_regression_values)
+    plt.plot(x_regression_values, y_regression_values,
+             label='Exponential Regression: y=' + str(round(a, 2)) + '(' + str(round(r, 2)) + ')^x + ' + str(round(c, 2)))
 
-    plt.show()
-
+    plt.legend(loc='upper left')
+    # plt.show()
     return figure
 
 
@@ -116,8 +127,9 @@ def predict_exponential(dataset: Dataset, year: int) -> float:
     a_and_b = exponential_regression(formatted_points)
     a = a_and_b[0]
     r = a_and_b[1]
+    c = a_and_b[2]
 
-    return a * r ** year
+    return a * r ** year + c
 
 
 ###############################################################################
@@ -178,7 +190,7 @@ def format_data_points(x_values: List[int], y_values: List[float]) -> List[Tuple
     return formatted_list
 
 
-def linear_regression(points: List[Tuple[int, float]]) -> tuple:
+def linear_regression(points: List[Tuple[int, float]]) -> Tuple[float, float]:
     """This function takes in a list of points from the dataset and performs a linear regression
     on them.
 
@@ -192,10 +204,10 @@ def linear_regression(points: List[Tuple[int, float]]) -> tuple:
     >>> pts = format_data_points(x, y)
     >>> expected = (-6.946112543863368, 0.010389450245916662)
     >>> actual = linear_regression(pts)
-    >>> expected == actual
+    >>> isclose(actual[0], expected[0]) and isclose(actual[1], expected[1])
     True
     """
-    # list of all x and y values 
+    # list of all x and y values
     all_x = [point[0] for point in points]
     all_y = [point[1] for point in points]
     # average x and y value for the given list of x and y values
@@ -211,7 +223,7 @@ def linear_regression(points: List[Tuple[int, float]]) -> tuple:
     return a, b
 
 
-def exponential_regression(points: List[Tuple[int, float]]) -> tuple:
+def exponential_regression(points: List[Tuple[int, float]]) -> Tuple[float, float, float]:
     """This function takes in a list of points from the dataset and performs an exponential
     regression on them.
 
@@ -223,14 +235,19 @@ def exponential_regression(points: List[Tuple[int, float]]) -> tuple:
     >>> x = sort_x_values(dataset)
     >>> y = sort_y_values(dataset)
     >>> pts = format_data_points(x, y)
-    >>> expected = (2.7544259293807842, 1.0008052637216431)
+    >>> expected = (0.039129090343771974, 1.002468483619786, 8.3)
     >>> actual = exponential_regression(pts)
-    >>> expected == actual
+    >>> isclose(actual[0], expected[0]) and isclose(actual[1], expected[1]) and isclose(actual[2], expected[2])
     True
     """
     # list of all x and y values
     all_x = [point[0] for point in points]
     all_y = [point[1] for point in points]
+
+    # make sure everything is positive
+    c = min(all_y) - 1
+    all_y = [y - c for y in all_y]
+
     # to calculate exponential regression first we want to find the linear regression of (x, log(y))
     all_log_y = []
     for number in all_y:
@@ -243,10 +260,31 @@ def exponential_regression(points: List[Tuple[int, float]]) -> tuple:
     a = 10 ** temp_regression_values[0]
     r = 10 ** temp_regression_values[1]
 
-    return a, r
+    return a, r, c
 
 
 if __name__ == '__main__':
     import doctest
+    import python_ta
+    import python_ta.contracts
 
     doctest.testmod(verbose=True)
+
+    # uncomment this if want to see python_ta report
+
+    # python_ta.contracts.DEBUG_CONTRACTS = False
+    # python_ta.contracts.check_all_contracts()
+    # python_ta.check_all(config={
+    #     'extra-imports': [
+    #         'math',
+    #         'filter',
+    #         'constants',
+    #         'matplotlib.pyplot',
+    #         'python_ta.contracts'
+    #     ],  # the names (strs) of imported modules
+    #     'allowed-io': [
+    #         'execute'
+    #     ],  # the names (strs) of functions that call print/open/input
+    #     'max-line-length': 150,
+    #     'disable': ['R1705', 'C0200', 'W0611', 'C0103']
+    # })

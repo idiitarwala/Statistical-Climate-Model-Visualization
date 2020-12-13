@@ -1,6 +1,11 @@
-from typing import List, Tuple, Dict
-from dataclasses import dataclass
+"""This module is responsible for filtering the dataset in data/temperatures.tab.
+Details can be found in the final report.
+
+By Freeman Cheng and Idris Tarwala.
+"""
 import math
+from dataclasses import dataclass
+from typing import List, Tuple, Dict
 
 
 @dataclass
@@ -116,5 +121,24 @@ filtered_data = filter_data(read_dataset('data/temperatures.tab'))
 
 if __name__ == '__main__':
     import doctest
+    import python_ta
+    import python_ta.contracts
 
     doctest.testmod(verbose=True)
+
+    # uncomment this if want to see python_ta report
+
+    # python_ta.contracts.DEBUG_CONTRACTS = False
+    # python_ta.contracts.check_all_contracts()
+    # python_ta.check_all(config={
+    #     'extra-imports': [
+    #         'math',
+    #         'dataclasses',
+    #         'python_ta.contracts'
+    #     ],  # the names (strs) of imported modules
+    #     'allowed-io': [
+    #         'read_dataset'
+    #     ],  # the names (strs) of functions that call print/open/input
+    #     'max-line-length': 150,
+    #     'disable': ['R1705', 'C0200', 'E9997', 'E9988', 'E9969']
+    # })
