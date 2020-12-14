@@ -14,8 +14,7 @@ plt.ioff()
 
 
 def plot_data_linear_regression(dataset: Dataset) -> plt.Figure:
-    """This function takes in a dataset and the corresponding a and b values calculated in
-    linear_regression to graph a scatter plot and its corresponding linear regression
+    """This function takes in a dataset and graphs a scatter plot as well as its corresponding linear regression
     with the equation y = a + bx
 
     This function returns the figure with the graphed scatter plot and its corresponding
@@ -52,8 +51,7 @@ def plot_data_linear_regression(dataset: Dataset) -> plt.Figure:
 
 
 def plot_data_exponential_regression(dataset: Dataset) -> plt.Figure:
-    """This function takes in a dataset and the corresponding a and r values calculated in
-    exponential_regression to graph a scatter plot and its corresponding exponential regression
+    """This function takes in a Dataset and graphs a scatter plot as well as its corresponding exponential regression
      with the equation y = a * (r) ** x
 
     This function returns the figure with the graphed scatter plot and its corresponding
@@ -91,8 +89,12 @@ def plot_data_exponential_regression(dataset: Dataset) -> plt.Figure:
 
 
 def plot_polynomial_regression(dataset: Dataset) -> plt.Figure:
-    """Given a dataset
-    return a figure with its polynomial regression."""
+    """This function takes in a Dataset and outputs its coressponding polynomial regression with a
+    degree of 10.
+
+    This function returns the figure with the graphed scatter plot and its corresponding
+    polynomial regression 
+    """
     x_value = sort_x_values(dataset)
     y_value = sort_y_values(dataset)
 
