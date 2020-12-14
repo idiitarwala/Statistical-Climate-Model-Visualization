@@ -8,6 +8,49 @@ from filter import Dataset
 import regressions
 
 
+def linear_regression_error(head: List[Tuple[int, float]], tail: List[Tuple[int, float]]) -> float:
+    """Given the head and tail of a dataset
+    return the average percentage error of the regression when using the head to predict the tail
+
+    Preconditions:
+        - len(head) > 0
+        - len(tail) > 0
+    """
+    a, b = regressions.linear_regression(head)
+    denominator = len(tail)
+    cumulative_error = 0
+    for point in tail:
+        x = point[0]
+        y = point[1]
+        prediction = a + b * x
+        error = abs((prediction - y) / y) * 100
+        cumulative_error += error
+    return cumulative_error / denominator
+
+
+def exponential_regression_error(head: List[Tuple[int, float]], tail: List[Tuple[int, float]]) -> float:
+    """Given the head and tail of a dataset
+    return the average percentage error of the regression when using the head to predict the tail
+
+    Preconditions:
+        - len(head) > 0
+        - len(tail) > 0
+    """
+    a, r, c = regressions.exponential_regression(head)
+    denominator = len(tail)
+    cumulative_error = 0
+    for point in tail:
+        x = point[0]
+        y = point[1]
+        prediction = a * (r ** x) + c
+        error = abs((prediction - y) / y) * 100
+        cumulative_error += error
+    return cumulative_error / denominator
+
+
+###############################################################################
+# Helper Functions
+###############################################################################
 def get_head_tail(dataset: Dataset) \
         -> Tuple[List[Tuple[int, float]], List[Tuple[int, float]]]:
     """Given a Dataset, split it in two parts - a head and a tail: the head consisting of
@@ -68,46 +111,6 @@ def get_head_tail_custom(dataset: Dataset, denominator: float) \
     head = points[0:n - int(n // denominator)]
     tail = points[n - int(n // denominator): n]
     return head, tail
-
-
-def linear_regression_error(head: List[Tuple[int, float]], tail: List[Tuple[int, float]]) -> float:
-    """Given the head and tail of a dataset
-    return the average percentage error of the regression when using the head to predict the tail
-
-    Preconditions:
-        - len(head) > 0
-        - len(tail) > 0
-    """
-    a, b = regressions.linear_regression(head)
-    denominator = len(tail)
-    cumulative_error = 0
-    for point in tail:
-        x = point[0]
-        y = point[1]
-        prediction = a + b * x
-        error = abs((prediction - y) / y) * 100
-        cumulative_error += error
-    return cumulative_error / denominator
-
-
-def exponential_regression_error(head: List[Tuple[int, float]], tail: List[Tuple[int, float]]) -> float:
-    """Given the head and tail of a dataset
-    return the average percentage error of the regression when using the head to predict the tail
-
-    Preconditions:
-        - len(head) > 0
-        - len(tail) > 0
-    """
-    a, r, c = regressions.exponential_regression(head)
-    denominator = len(tail)
-    cumulative_error = 0
-    for point in tail:
-        x = point[0]
-        y = point[1]
-        prediction = a * (r ** x) + c
-        error = abs((prediction - y) / y) * 100
-        cumulative_error += error
-    return cumulative_error / denominator
 
 
 if __name__ == '__main__':
