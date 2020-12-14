@@ -104,7 +104,7 @@ def execute() -> None:
                                          'the general trend which the temperatures '
                                          'are heading towards.')
 
-    output.generate_sheet('output/sheet.html')
+    output.generate_sheet('sheet.html')
 
 
 if __name__ == '__main__':

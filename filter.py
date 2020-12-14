@@ -117,7 +117,7 @@ def filter_data(dataset: List[Tuple[str, float]]) -> Dict[str, Dataset]:
     return ret
 
 
-filtered_data = filter_data(read_dataset('data/temperatures.tab'))
+filtered_data = filter_data(read_dataset('temperatures.tab'))
 
 if __name__ == '__main__':
     import doctest
